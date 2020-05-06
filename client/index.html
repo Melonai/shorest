@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shor</title>
+    <link rel="stylesheet" href="main.css">
+    <script src="main.js"></script>
+</head>
+<body>
+<div class="active">
+    <div class="title">
+        <a><b>sho.rest</b><br></a>
+        <a>Made with ❤ by <b>Mel</b></a>
+    </div>
+    <form class="form-inline" onsubmit="onFormSubmit(); return false;">
+        <div class="input-group" id="form-group">
+            <div class="input-container">
+                <a class="input-field-text">https://</a>
+                <input oninput="inputUpdate()" pattern="(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?" class="input-field" id="url" required>
+            </div>
+            <div class="btn-container">
+                <input type="submit" value="→" class="btn">
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>
