@@ -1,59 +1,117 @@
-extern crate actix_web;
-extern crate env_logger;
 #[macro_use] extern crate serde_derive;
+#[macro_use] extern crate diesel;
 
-use actix_web::{middleware, web, HttpServer, App, HttpResponse, HttpRequest};
-use listenfd::ListenFd;
-use actix_web::web::Json;
+mod schema;
+use schema::links;
 
-#[derive(Debug, Deserialize)]
-struct UserData {
-    url: String
+mod types;
+use types::*;
+
+use actix_web::{middleware, web, HttpServer, App, HttpResponse, Result};
+use actix_web::web::{Json, Path, Data};
+use diesel::{PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, QueryResult};
+use dotenv::dotenv;
+use diesel::r2d2::{ConnectionManager, Pool};
+
+fn establish_connection() -> Pool<ConnectionManager<PgConnection>> {
+    dotenv().ok();
+    let database_url = std::env::var("DATABASE_URL").expect("Cannot find DATABASE_URL. Check .env file.");
+    let manager = ConnectionManager::<PgConnection>::new(database_url);
+    Pool::builder().max_size(4).build(manager).expect("Failed to create pool.")
 }
 
-#[derive(Debug, Serialize)]
-struct UserResponse {
-    hash: String,
-    key: String
+fn make_url(url_to_check: &str) -> Result<String, ()> {
+    let url_object = match url::Url::parse(url_to_check) {
+        Ok(result_url) => result_url,
+        Err(_) => return Err(())
+    };
+    if !url_object.cannot_be_a_base() && url_object.has_host() && url_object.domain().is_some() {
+        Ok(format!("https://{}{}{}",
+                   url_object.domain().unwrap(),
+                   url_object.path(),
+                   url_object.query().map_or("".to_owned(), |q| format!("?{}", q)))
+        )
+    } else {
+        Err(())
+    }
+}
+
+fn add_entry_to_database(entry: Entry, connection: &PgConnection) -> QueryResult<Entry> {
+    diesel::insert_into(links::table).values(&entry).get_result::<Entry>(connection)
+}
+
+fn get_url_from_database(url_hash: &String, connection: &PgConnection) -> Result<String, diesel::result::Error> {
+    links::table.filter(links::hash.eq(url_hash)).select(links::url).first(connection)
+}
+
+fn get_hash_from_string(to_hash: &String) -> String {
+    let mut hasher = crc32fast::Hasher::new();
+    hasher.update(to_hash.as_bytes());
+    base64::encode_config(hasher.finalize().to_ne_bytes(), base64::URL_SAFE_NO_PAD).chars().take(3).collect()
+}
+
+fn add_to_database_safely(mut hash: String, user_url: String, connection: &PgConnection) -> String {
+    match get_url_from_database(&hash, connection) {
+        Ok(other_url) => {
+            if user_url != other_url {
+                hash = add_to_database_safely(get_hash_from_string(&hash), user_url, connection);
+            }
+        }
+        Err(_) => {
+            if add_entry_to_database(Entry { hash: hash.clone() , url: user_url }, connection).is_err() {
+
+            }
+        }
+    };
+    hash
 }
 
 async fn root() -> HttpResponse {
-    HttpResponse::Ok().body("Please make a POST request to / with the URL you want to shorten!")
+    HttpResponse::Ok().body("Please make a POST request to / in the format {'url': '<your_url>'} with the URL you want to shorten!")
 }
 
-async fn shorten(req: HttpRequest, params: Json<UserData>) -> HttpResponse {
-    //println!("{:?}", req.head());
-    println!("{:?}", params.url);
-    HttpResponse::Ok().body("Right back at you!")
+async fn shorten(params: Json<UserData>, state: Data<PoolState>) -> HttpResponse {
+    let user_url = match make_url(&params.url) {
+        Ok(parse_result) => parse_result,
+        Err(_) => {
+            return HttpResponse::BadRequest().body("The URL you entered does not follow the proper URL format.");
+        },
+    };
+    let hash= add_to_database_safely(get_hash_from_string(&user_url), user_url, &state.get().expect("Could not get a connection from pool"));
+
+    HttpResponse::Ok().json(UserResponse{ hash })
 }
 
-async fn redirect() -> HttpResponse {
-    HttpResponse::TemporaryRedirect().header("Location", "http://google.com/").finish()
+async fn redirect(info: Path<String>, state: Data<PoolState>) -> HttpResponse {
+    match get_url_from_database(&info, &state.get().expect("Could not get a connection from pool")) {
+        Ok(url) => HttpResponse::TemporaryRedirect().header("Location", url).finish(),
+        Err(_) => HttpResponse::NotFound().body("The URL you specified could not be found.")
+    }
 }
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-    let mut lfd = ListenFd::from_env();
     std::env::set_var("RUST_LOG", "actix_web=info");
     env_logger::init();
-    let mut server = HttpServer::new(|| {
+
+    let pool = establish_connection();
+
+    HttpServer::new(move || {
         App::new()
             .wrap(middleware::Logger::default())
+            .data(pool.clone())
             .service(
             web::resource("/")
                 .route(web::get().to(root))
                 .route(web::post().to(shorten))
             )
             .service(
-                web::resource("/{hash}/{key}")
+                web::resource("/{hash}")
                     .route(web::get().to(redirect))
             )
-    });
-    server = if let Some(l) = lfd.take_tcp_listener(0).unwrap() {
-        server.listen(l)?
-    } else {
-        server.bind("localhost:3000")?
-    };
+    })
+        .bind("localhost:3000")?
+        .run()
+        .await
 
-    server.run().await
 }
