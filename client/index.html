@@ -2,9 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Shor</title>
-    <link rel="stylesheet" href="main.css">
-    <script src="main.js"></script>
+    <title>Shorest</title>
+    <link rel="stylesheet" href="static/main.css">
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/validate.js/0.13.1/validate.min.js"></script>
+    <script src="static/main.js"></script>
 </head>
 <body>
 <div class="active">
@@ -12,11 +14,11 @@
         <a><b>sho.rest</b><br></a>
         <a>Made with ❤ by <b>Mel</b></a>
     </div>
-    <form class="form-inline" onsubmit="onFormSubmit(); return false;">
+    <form id="form">
         <div class="input-group" id="form-group">
             <div class="input-container">
                 <a class="input-field-text">https://</a>
-                <input oninput="inputUpdate()" pattern="(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?" class="input-field" id="url" required>
+                <input class="input-field" id="url" required>
             </div>
             <div class="btn-container">
                 <input type="submit" value="→" class="btn">

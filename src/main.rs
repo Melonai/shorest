@@ -7,11 +7,12 @@ use schema::links;
 mod types;
 use types::*;
 
-use actix_web::{middleware, web, HttpServer, App, HttpResponse, Result};
+use actix_web::{middleware, web, HttpServer, App, HttpResponse, Result, HttpRequest};
 use actix_web::web::{Json, Path, Data};
 use diesel::{PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, QueryResult};
 use dotenv::dotenv;
 use diesel::r2d2::{ConnectionManager, Pool};
+use actix_files::{Files, NamedFile};
 
 fn establish_connection() -> Pool<ConnectionManager<PgConnection>> {
     dotenv().ok();
@@ -58,16 +59,14 @@ fn add_to_database_safely(mut hash: String, user_url: String, connection: &PgCon
             }
         }
         Err(_) => {
-            if add_entry_to_database(Entry { hash: hash.clone() , url: user_url }, connection).is_err() {
-
-            }
+            add_entry_to_database(Entry { hash: hash.clone() , url: user_url }, connection).unwrap();
         }
     };
     hash
 }
 
-async fn root() -> HttpResponse {
-    HttpResponse::Ok().body("Please make a POST request to / in the format {'url': '<your_url>'} with the URL you want to shorten!")
+async fn root(req: HttpRequest) -> HttpResponse {
+    NamedFile::open("./client/index.html").unwrap().into_response(&req).unwrap()
 }
 
 async fn shorten(params: Json<UserData>, state: Data<PoolState>) -> HttpResponse {
@@ -77,7 +76,7 @@ async fn shorten(params: Json<UserData>, state: Data<PoolState>) -> HttpResponse
             return HttpResponse::BadRequest().body("The URL you entered does not follow the proper URL format.");
         },
     };
-    let hash= add_to_database_safely(get_hash_from_string(&user_url), user_url, &state.get().expect("Could not get a connection from pool"));
+    let hash = add_to_database_safely(get_hash_from_string(&user_url), user_url, &state.get().expect("Could not get a connection from pool"));
 
     HttpResponse::Ok().json(UserResponse{ hash })
 }
@@ -108,6 +107,9 @@ async fn main() -> std::io::Result<()> {
             .service(
                 web::resource("/{hash}")
                     .route(web::get().to(redirect))
+            )
+            .service(
+                Files::new("/static/", "./client/static/")
             )
     })
         .bind("localhost:3000")?

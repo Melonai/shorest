@@ -86,6 +86,7 @@ html * {
     touch-action: manipulation;
     cursor: pointer;
     background-image: none;
+    background-color: #fff;
     padding: 4px 5vw;
     height: 10vh;
     -webkit-user-select: none;
