@@ -26,7 +26,11 @@ fn make_url(url_to_check: &str) -> Result<String, ()> {
         Ok(result_url) => result_url,
         Err(_) => return Err(())
     };
-    if !url_object.cannot_be_a_base() && url_object.has_host() && url_object.domain().is_some() {
+    if !url_object.cannot_be_a_base() &&
+        url_object.has_host() &&
+        url_object.host_str().map_or(false, |h| h.contains('.')) &&
+        url_object.domain().is_some()
+    {
         Ok(format!("https://{}{}{}",
                    url_object.domain().unwrap(),
                    url_object.path(),
@@ -115,5 +119,4 @@ async fn main() -> std::io::Result<()> {
         .bind("localhost:3000")?
         .run()
         .await
-
 }

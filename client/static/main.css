@@ -5,8 +5,9 @@ html * {
 
 .active {
     justify-content: center;
+    position: absolute;
     max-width: 100vw;
-    margin-top: 20%;
+    top: 40%;
     padding: 0 50px 0 50px;
 }
 
@@ -21,7 +22,6 @@ html * {
     position: relative;
     display: table;
     border-collapse: separate;
-    border-color: #E0E0E0;
     transition: border-color 1s;
 }
 
@@ -62,7 +62,7 @@ html * {
     height: 10vh;
 }
 
-.btn-container {
+.button-container {
     display: table-cell;
     position: relative;
     font-size: 0;
@@ -73,7 +73,7 @@ html * {
     border-color: inherit;
 }
 
-.btn {
+.button {
     z-index: 2;
     margin-left: -1px;
     display: inline-block;
@@ -87,6 +87,7 @@ html * {
     cursor: pointer;
     background-image: none;
     background-color: #fff;
+    color: #727272;
     padding: 4px 5vw;
     height: 10vh;
     -webkit-user-select: none;
@@ -97,4 +98,5 @@ html * {
     border: 2px solid;
     border-color: inherit;
     border-left: none;
+    transition: color 1s;
 }
