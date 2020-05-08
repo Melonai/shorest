@@ -10,11 +10,24 @@ function onFormSubmit() {
     const urlField = $('#url');
     if (validateURL(urlField.val())) {
         const data = JSON.stringify({'url': 'https://' + urlField.val()});
-        $.ajax('/', {method: 'POST', data: data, contentType: 'application/json'}).then(function (r) {
-            urlField.val('sho.rest/' + r.hash);
-        })
+        $.ajax('/', {method: 'POST', data: data, contentType: 'application/json'}).then(onSuccess);
     }
     return false;
+}
+
+function onSuccess(response) {
+    const responseDiv = $('#response-template')[0].content.querySelector('div');
+    const node = document.importNode(responseDiv, true);
+    const urlField = $('#url');
+    let text;
+    if (urlField.val().length < 20 ) {
+        text = 'The short link for <strong>' + urlField.val() + '</strong> is<br><strong>sho.rest/' + response.hash + '</strong>';
+    } else {
+        text = 'The short link for your URL is<br><strong>sho.rest/' + response.hash + '</strong>';
+    }
+    node.querySelector('.response-text').innerHTML = text;
+    $(node).find('.copy-text').on('click', copyClick);
+    $('#responses')[0].prepend(node);
 }
 
 function inputUpdate() {
@@ -34,12 +47,12 @@ function setButtonVisible(visible) {
     const left = $('#left');
     const formGroup = $('#form-group');
 
-    const values = visible ? valuesEnabled : valuesDisabled;
+    let values;
     if (visible) {
-        const values = valuesEnabled;
+        values = valuesEnabled;
         form.removeAttr('disabled');
     } else {
-        const values = valuesDisabled;
+        values = valuesDisabled;
         form[0].setAttribute('disabled', '');
     }
 
@@ -54,8 +67,30 @@ function pasteTrim() {
     const pattern = /^https?:\/\//;
     setTimeout(() => {
         const element = $('#url');
-        element.value = element.value.replace(pattern, '');
+        element.val(element.val().replace(pattern, ''));
+        inputUpdate();
     }, 0);
+}
+
+function copyClick(event) {
+    const target = $(event.target);
+    if (target.hasClass('copied')) return;
+    const copyText = target.closest('.copy-text');
+    const previousCopied = $('.copied');
+
+    previousCopied.removeClass('copied');
+    previousCopied.html('<strong>Copy Link</strong>');
+    copyText.html('Link Copied!');
+    copyText.addClass('copied');
+
+    const link = copyText.parent().find('.response-text strong').last();
+
+    const range = document.createRange();
+    range.selectNode(link[0]);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
 }
 
 function validateURL(url) {

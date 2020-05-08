@@ -18,11 +18,37 @@ html * {
     color: #E0E0E0;
 }
 
+.response-text {
+    margin-bottom: 0;
+}
+
+.copy-text {
+    color: #E0E0E0;
+    padding-right: 30px;
+    text-align: right;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+}
+
 .input-group {
     position: relative;
     display: table;
+    border-color: #E0E0E0;
     border-collapse: separate;
     transition: border-color 1s;
+}
+
+.response-container {
+    display: flex;
+    align-items: center;
+    border: 2px solid #E0E0E0;
+    margin: 15px 30px 0 30px;
+    height: 14vh;
+    justify-content: space-between;
+    border-radius: 0 5vh 5vh 5vh;
 }
 
 .input-field {
@@ -54,7 +80,7 @@ html * {
     align-items: center;
     position: relative;
     padding: 0;
-    border-radius: 100px 0 0 100px;
+    border-radius: 5vh 0 0 5vh;
     border: 2px solid;
     border-color: inherit;
     margin: 0;
@@ -94,9 +120,18 @@ html * {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    border-radius: 0 100px 100px 0;
+    border-radius: 0 5vh 5vh 0;
     border: 2px solid;
     border-color: inherit;
     border-left: none;
     transition: color 1s;
+}
+
+strong {
+    font-weight: normal;
+    color: #727272;
+}
+
+a {
+    text-decoration: none;
 }
