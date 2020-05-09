@@ -1,6 +1,6 @@
 html * {
     font-family: Roboto, sans-serif;
-    font-size: 18px;
+    font-size: 3vmin;
 }
 
 .active {
@@ -125,6 +125,9 @@ html * {
     border-color: inherit;
     border-left: none;
     transition: color 1s;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
 strong {
