@@ -1,76 +1,69 @@
 $(document).ready(function() {
-    const form = $('#form');
-    form.on('submit', onFormSubmit);
-    form.attr("novalidate",true);
-    $('#url').on({'input': inputUpdate, 'paste': pasteTrim});
+    const FORM = $('#form');
+    const URL_FIELD = $('#url');
+
+    FORM.on('submit', onFormSubmit);
+    FORM.attr("novalidate",true);
+    URL_FIELD.on({'input': inputUpdate, 'paste': pasteTrim});
+
+    function onFormSubmit() {
+        if (validateURL(URL_FIELD.val())) {
+            const data = JSON.stringify({'url': 'https://' + URL_FIELD.val()});
+            $.ajax('/', {method: 'POST', data: data, contentType: 'application/json'}).then(onSuccess);
+        }
+        return false;
+    }
+
+    function onSuccess(response) {
+        const responseDiv = $('#response-template')[0].content.querySelector('div');
+        const node = document.importNode(responseDiv, true);
+        let text;
+        if (URL_FIELD.val().length < 20 ) {
+            text = 'The short link for <strong>' + URL_FIELD.val() + '</strong> is<br><strong>sho.rest/' + response.hash + '</strong>';
+        } else {
+            text = 'The short link for your URL is<br><strong>sho.rest/' + response.hash + '</strong>';
+        }
+        node.querySelector('.response-text').innerHTML = text;
+        $(node).find('.copy-text').on('click', copyClick);
+        $('#responses')[0].prepend(node);
+    }
+
+    function inputUpdate() {
+        const visible = validateURL(URL_FIELD.val())
+        if (!FORM[0].hasAttribute('disabled') === visible) return;
+
+        const valuesDisabled = {borderColor: '#FFBCBC', borderRight: 'none', buttonValue: '', buttonValueColor: '#FFFFFF'};
+        const valuesEnabled = {borderColor: '#E0E0E0', borderRight: '', buttonValue: '→', buttonValueColor: '#727272'};
+
+        const btn = $('#btn');
+        const left = $('#left');
+        const formGroup = $('#form-group');
+
+        let values;
+        if (visible) {
+            values = valuesEnabled;
+            FORM.removeAttr('disabled');
+        } else {
+            values = valuesDisabled;
+            FORM[0].setAttribute('disabled', '');
+        }
+
+        formGroup.css('border-color', values.borderColor);
+        left.css('border-right', values.borderRight);
+        btn.css('color', values.buttonValueColor);
+        btn.val(values.buttonValue);
+    }
+
+    function pasteTrim() {
+        const pattern = /^https?:\/\//;
+        setTimeout(() => {
+            URL_FIELD.val(URL_FIELD.val().replace(pattern, ''));
+            inputUpdate();
+        }, 0);
+    }
+
     inputUpdate();
 });
-
-function onFormSubmit() {
-    const urlField = $('#url');
-    if (validateURL(urlField.val())) {
-        const data = JSON.stringify({'url': 'https://' + urlField.val()});
-        $.ajax('/', {method: 'POST', data: data, contentType: 'application/json'}).then(onSuccess);
-    }
-    return false;
-}
-
-function onSuccess(response) {
-    const responseDiv = $('#response-template')[0].content.querySelector('div');
-    const node = document.importNode(responseDiv, true);
-    const urlField = $('#url');
-    let text;
-    if (urlField.val().length < 20 ) {
-        text = 'The short link for <strong>' + urlField.val() + '</strong> is<br><strong>sho.rest/' + response.hash + '</strong>';
-    } else {
-        text = 'The short link for your URL is<br><strong>sho.rest/' + response.hash + '</strong>';
-    }
-    node.querySelector('.response-text').innerHTML = text;
-    $(node).find('.copy-text').on('click', copyClick);
-    $('#responses')[0].prepend(node);
-}
-
-function inputUpdate() {
-    const userInput = $('#url').val();
-    setButtonVisible(validateURL(userInput));
-}
-
-function setButtonVisible(visible) {
-    const form = $('#form');
-
-    if (!form[0].hasAttribute('disabled') === visible) return;
-
-    const valuesDisabled = {borderColor: '#FFBCBC', borderRight: 'none', buttonValue: '', buttonValueColor: '#FFFFFF'};
-    const valuesEnabled = {borderColor: '#E0E0E0', borderRight: '', buttonValue: '→', buttonValueColor: '#727272'};
-
-    const btn = $('#btn');
-    const left = $('#left');
-    const formGroup = $('#form-group');
-
-    let values;
-    if (visible) {
-        values = valuesEnabled;
-        form.removeAttr('disabled');
-    } else {
-        values = valuesDisabled;
-        form[0].setAttribute('disabled', '');
-    }
-
-    formGroup.css('border-color', values.borderColor);
-    left.css('border-right', values.borderRight);
-    btn.css('color', values.buttonValueColor);
-    btn.val(values.buttonValue);
-
-}
-
-function pasteTrim() {
-    const pattern = /^https?:\/\//;
-    setTimeout(() => {
-        const element = $('#url');
-        element.val(element.val().replace(pattern, ''));
-        inputUpdate();
-    }, 0);
-}
 
 function copyClick(event) {
     const target = $(event.target);
