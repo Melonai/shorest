@@ -3,4 +3,4 @@
 build/
 .idea/
 node_modules/
-*.lock
+client/yarn.lock
