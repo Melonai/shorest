@@ -1,0 +1,7 @@
+{
+  "name": "shorest",
+  "version": "0.2.0",
+  "scripts": {
+    "postinstall": "yarn --cwd ./client/; yarn --cwd ./client/ build"
+  }
+}

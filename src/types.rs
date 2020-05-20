@@ -9,7 +9,12 @@ pub struct UserData {
 
 #[derive(Debug, Serialize)]
 pub struct UserResponse {
-    pub hash: String,
+    pub hash: String
+}
+
+#[derive(Debug, Serialize)]
+pub struct ErrorResponse {
+    pub error: String
 }
 
 #[derive(Queryable, Insertable)]
