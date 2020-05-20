@@ -69,14 +69,14 @@ fn add_to_database_safely(mut hash: String, user_url: String, connection: &PgCon
 }
 
 async fn root(req: HttpRequest) -> HttpResponse {
-    NamedFile::open("./client/index.html").unwrap().into_response(&req).unwrap()
+    NamedFile::open("./client/build/index.html").unwrap().into_response(&req).unwrap()
 }
 
 async fn shorten(params: Json<UserData>, state: Data<PoolState>) -> HttpResponse {
     let user_url = match make_url(&params.url) {
         Ok(parse_result) => parse_result,
         Err(_) => {
-            return HttpResponse::BadRequest().body("The URL you entered does not follow the proper URL format.");
+            return HttpResponse::BadRequest().json(ErrorResponse{error: "The URL you entered does not follow the proper URL format.".to_string()});
         },
     };
     let hash = add_to_database_safely(get_hash_from_string(&user_url), user_url, &state.get().expect("Could not get a connection from pool"));
@@ -87,7 +87,7 @@ async fn shorten(params: Json<UserData>, state: Data<PoolState>) -> HttpResponse
 async fn redirect(info: Path<String>, state: Data<PoolState>) -> HttpResponse {
     match get_url_from_database(&info, &state.get().expect("Could not get a connection from pool")) {
         Ok(url) => HttpResponse::TemporaryRedirect().header("Location", url).finish(),
-        Err(_) => HttpResponse::NotFound().body("The URL you specified could not be found.")
+        Err(_) => HttpResponse::TemporaryRedirect().header("Location", "/").finish()
     }
 }
 
@@ -117,7 +117,7 @@ async fn main() -> std::io::Result<()> {
                     .route(web::get().to(redirect))
             )
             .service(
-                Files::new("/static/", "./client/static/")
+                Files::new("/client/", "./client/build/")
             )
     })
         .bind(("0.0.0.0", port))?

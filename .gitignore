@@ -1,2 +1,6 @@
-/target
+/target/
 .DS_Store
+build/
+.idea/
+node_modules/
+*.lock

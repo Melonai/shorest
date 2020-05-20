@@ -1,0 +1,13 @@
+html * {
+  font-family: Roboto, sans-serif;
+  font-size: 3vmin;
+}
+
+#root {
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+  box-sizing: border-box;
+  top: 40%;
+  padding: 0 50px 0 50px;
+}
