@@ -11,10 +11,16 @@ function Form(props) {
         }
     };
 
-    const handleChange = (e) => {
+    const handleChange = e => {
         const userInput = e.target.value;
         const valid = isURL('https://' + userInput);
         setState({value: userInput, valid: valid});
+    };
+
+    const handlePaste = e => {
+        e.preventDefault();
+        const pattern = /^https?:\/\//;
+        setState({value: e.clipboardData.getData('Text').replace(pattern, ''), valid: false});
     };
 
     return (
@@ -22,7 +28,7 @@ function Form(props) {
             <div className={"input-group" + (state.valid ? "" : " disabled")}>
                 <div className={"input-container" + (state.valid ? "" : " border-r-none")}>
                     <span className="input-field-text">https://</span>
-                    <input className="input-field" required onChange={handleChange}/>
+                    <input className="input-field" required value={state.value} onChange={handleChange} onPaste={handlePaste}/>
                 </div>
                 <Button valid={state.valid} submit={handleSubmit}/>
             </div>
