@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import Loader from "./Loader";
 import CopyButton from "./CopyButton";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBomb } from '@fortawesome/free-solid-svg-icons';
 
 function Response(props){
     const CancelToken = axios.CancelToken;
@@ -23,8 +25,10 @@ function Response(props){
     }, [props.url, requestState.cancel])
 
     let text;
+    let rightItem;
     if (!requestState.loading) {
         if (!requestState.error) {
+            rightItem = <CopyButton hash={requestState.hash}/>;
             if (props.url.length < 20) {
                 text =
                     <span>The short link for <strong>{props.url}</strong> is<br/><strong>sho.rest/{requestState.hash}</strong></span>;
@@ -33,6 +37,7 @@ function Response(props){
                     <span>The short link for your URL is<br/><strong>sho.rest/{requestState.hash}</strong></span>;
             }
         } else {
+            rightItem = <FontAwesomeIcon className="right-item" icon={faBomb}/>;
             text = <span>There was an error.</span>
         }
     } else {
@@ -42,7 +47,7 @@ function Response(props){
     return (
         <div className={"response-container" + (requestState.error ? " disabled" : "")}>
             <div className={"title response-text" + (requestState.error ? " disabled" : "")}>{text}</div>
-            {requestState.error || requestState.loading ? "" : <CopyButton hash={requestState.hash}/>}
+            {rightItem}
         </div>
     )
 }

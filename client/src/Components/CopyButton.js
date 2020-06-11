@@ -17,7 +17,7 @@ function CopyButton(props) {
     }
 
     return (
-        <span className="copy-text" onClick={handleClick}>{content}</span>
+        <span className="copy-text right-item" onClick={handleClick}>{content}</span>
     )
 }
 

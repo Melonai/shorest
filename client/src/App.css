@@ -2,17 +2,22 @@
   padding-left: 30px;
   margin-bottom: 10px;
   line-height: 1.42857143;
-  color: #E0E0E0;
+  color: #ffffff;
 }
 
 .response-text {
   margin-bottom: 0;
+  color: #C5C5D3;
+}
+
+.right-item {
+  color: #ffffff;
+  padding-right: 30px;
+  text-align: right;
 }
 
 .copy-text {
-  color: #E0E0E0;
-  padding-right: 30px;
-  text-align: right;
+  color: #c5c5d3;
   -webkit-touch-callout: none !important;
   -webkit-user-select: none !important;
   -moz-user-select: none !important;
@@ -23,19 +28,17 @@
 .input-group {
   position: relative;
   display: table;
-  border-color: #E0E0E0;
   border-collapse: separate;
-  transition: border-color 1s;
 }
 
 .response-container {
   display: flex;
   align-items: center;
-  border: 2px solid #E0E0E0;
   margin: 15px 30px 0 30px;
   height: 14vh;
   justify-content: space-between;
   border-radius: 0 5vh 5vh 5vh;
+  background-color: #ffffff;
 }
 
 .input-field {
@@ -43,7 +46,7 @@
   z-index: 2;
   margin-bottom: 0;
   text-indent: 0;
-  color: #727272;
+  color: #3A3A5C;
   background-color: #fff;
   background-image: none;
   box-sizing: border-box;
@@ -56,7 +59,7 @@
 .input-field-text {
   margin-left: 30px;
   box-sizing: border-box;
-  color: #E0E0E0;
+  color: #C5C5D3;
 }
 
 .input-container {
@@ -68,11 +71,10 @@
   position: relative;
   padding: 0;
   border-radius: 5vh 0 0 5vh;
-  border: 2px solid;
-  border-color: inherit;
   margin: 0;
   box-sizing: border-box;
   height: 10vh;
+  background-color: white;
 }
 
 .button-container {
@@ -83,12 +85,10 @@
   width: 1%;
   height: 0;
   vertical-align: middle;
-  border-color: inherit;
 }
 
 .button {
   z-index: 2;
-  margin-left: -1px;
   display: inline-block;
   margin-bottom: 0;
   font-weight: 400;
@@ -100,7 +100,7 @@
   cursor: pointer;
   background-image: none;
   background-color: #fff;
-  color: #727272;
+  color: #3A3A5C;
   padding: 4px 5vw;
   height: 10vh;
   -webkit-user-select: none;
@@ -108,17 +108,15 @@
   -ms-user-select: none;
   user-select: none;
   border-radius: 0 5vh 5vh 0;
-  border: 2px solid;
-  border-left-style: none;
-  transition: color 1s;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  border: none;
 }
 
 strong {
   font-weight: normal;
-  color: #727272;
+  color: #3A3A5C;
 }
 
 a {
@@ -126,16 +124,8 @@ a {
 }
 
 .disabled {
-  border-color: #ffbcbc;
-  color: #ffbcbc;
-}
-
-.border-r-none {
-  border-right: none;
-}
-
-#btn {
-  border-color: inherit;
+  background-color: #ff1a61;
+  color: #ffffff;
 }
 
 @-webkit-keyframes scale {
@@ -179,7 +169,7 @@ a {
   animation: scale 0.75s -0.24s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08); }
 
 .ball-pulse > div {
-  background-color: #727272;
+  background-color: #3A3A5C;
   width: 6px;
   height: 6px;
   margin: 5px;

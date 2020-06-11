@@ -25,8 +25,8 @@ function Form(props) {
 
     return (
         <form id="form" onSubmit={(e) => e.preventDefault()}>
-            <div className={"input-group" + (state.valid ? "" : " disabled")}>
-                <div className={"input-container" + (state.valid ? "" : " border-r-none")}>
+            <div className="input-group">
+                <div className="input-container">
                     <span className="input-field-text">https://</span>
                     <input className="input-field" required value={state.value} onChange={handleChange} onPaste={handlePaste}/>
                 </div>
