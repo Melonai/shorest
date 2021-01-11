@@ -1,6 +1,8 @@
-/target/
 .DS_Store
-build/
 .idea/
+
+build/
+target/
 node_modules/
-client/yarn.lock
+
+.env

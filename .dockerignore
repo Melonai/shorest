@@ -1,3 +1,4 @@
-target
+server/target
+client/node_modules
 .idea
 README.md
