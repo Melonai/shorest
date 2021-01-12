@@ -11,12 +11,12 @@ use types::*;
 use actix_web::{middleware, web, HttpServer, App, HttpResponse, Result, HttpRequest};
 use actix_web::web::{Json, Path, Data};
 use diesel::{PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, QueryResult};
-use dotenv::dotenv;
 use diesel::r2d2::{ConnectionManager, Pool};
 use actix_files::{Files, NamedFile};
 
 fn establish_connection() -> Pool<ConnectionManager<PgConnection>> {
-    let database_url = std::env::var("DATABASE_URL").expect("Cannot find DATABASE_URL. Check .env file.");
+    let password = std::env::var("POSTGRES_PASSWORD").expect("Cannot find POSTGRES_PASSWORD in environment.");
+    let database_url = format!("postgresql://postgres:{}@postgres/shorest", password);
     let manager = ConnectionManager::<PgConnection>::new(database_url);
     Pool::builder().max_size(4).build(manager).expect("Failed to create pool.")
 }
@@ -70,7 +70,7 @@ fn add_to_database_safely(mut hash: String, user_url: String, connection: &PgCon
 }
 
 async fn root(req: HttpRequest) -> HttpResponse {
-    NamedFile::open("./client/build/index.html").unwrap().into_response(&req).unwrap()
+    NamedFile::open("./client/index.html").unwrap().into_response(&req).unwrap()
 }
 
 async fn shorten(params: Json<UserData>, state: Data<PoolState>) -> HttpResponse {
@@ -94,7 +94,6 @@ async fn redirect(info: Path<String>, state: Data<PoolState>) -> HttpResponse {
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-    dotenv().ok();
     std::env::set_var("RUST_LOG", "actix_web=info");
     env_logger::init();
 
@@ -118,7 +117,7 @@ async fn main() -> std::io::Result<()> {
                     .route(web::get().to(redirect))
             )
             .service(
-                Files::new("/client/", "./client/build/")
+                Files::new("/client/", "./client/")
             )
     })
         .bind(("0.0.0.0", port))?

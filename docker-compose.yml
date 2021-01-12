@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  server:
+    build:
+      context: .
+    container_name: shorest-server
+    ports:
+      - "127.0.0.1:${PORT}:${PORT}"
+    depends_on:
+      - postgres
+    links:
+      - postgres:postgres
+    environment:
+      - PORT
+      - POSTGRES_PASSWORD
+  postgres:
+    image: "postgres:alpine"
+    container_name: shorest-postgres
+    volumes:
+      - database:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=shorest
+      - POSTGRES_PASSWORD
+
+volumes:
+  database:
