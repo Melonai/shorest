@@ -16,7 +16,7 @@ RUN yarn build
 
 FROM server-cache as server
 WORKDIR /server
-COPY server/src src
+COPY server/ ./
 RUN cargo build --release
 
 FROM alpine:latest

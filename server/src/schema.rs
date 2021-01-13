@@ -1,6 +1,6 @@
 table! {
     links (hash) {
-        hash -> Text,
-        url -> Text,
+        hash -> Bpchar,
+        url -> Varchar,
     }
 }

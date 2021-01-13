@@ -5,7 +5,7 @@ services:
       context: .
     container_name: shorest-server
     ports:
-      - "127.0.0.1:${PORT}:${PORT}"
+      - "127.0.0.1:${PORT}:80"
     depends_on:
       - postgres
     links:

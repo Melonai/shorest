@@ -1,5 +1,6 @@
 extern crate openssl;
 #[macro_use] extern crate diesel;
+#[macro_use] extern crate diesel_migrations;
 #[macro_use] extern crate serde_derive;
 
 mod schema;
@@ -92,16 +93,20 @@ async fn redirect(info: Path<String>, state: Data<PoolState>) -> HttpResponse {
     }
 }
 
+embed_migrations!("migrations");
+
+fn run_migrations(pool: &PoolState) {
+    let migration_connection = &pool.get().expect("Could not connect to database to run migrations");
+    embedded_migrations::run_with_output(migration_connection, &mut std::io::stdout());
+}
+
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=info");
     env_logger::init();
 
     let pool = establish_connection();
-    let port = std::env::var("PORT")
-        .unwrap()
-        .parse()
-        .expect("PORT must be a number.");
+    run_migrations(&pool);
 
     HttpServer::new(move || {
         App::new()
@@ -120,7 +125,7 @@ async fn main() -> std::io::Result<()> {
                 Files::new("/client/", "./client/")
             )
     })
-        .bind(("0.0.0.0", port))?
+        .bind(("0.0.0.0", 80))?
         .run()
         .await
 }

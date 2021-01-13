@@ -1,0 +1,4 @@
+CREATE TABLE links (
+    hash CHAR(3) PRIMARY KEY,
+    url VARCHAR(2048) NOT NULL
+);
