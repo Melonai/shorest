@@ -28,7 +28,7 @@ pub fn establish_connection() -> Pool<ConnectionManager<PgConnection>> {
 
 /// Gets a link from the database.
 pub fn get_link_from_database(
-    url_hash: &String,
+    url_hash: &str,
     connection: &PgConnection,
 ) -> actix_web::Result<Option<String>, diesel::result::Error> {
     links::table

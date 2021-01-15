@@ -7,7 +7,7 @@ pub fn make_url(given_url: &str) -> Result<String, ParseError> {
     Ok(parsed_url.into_string())
 }
 
-pub fn get_hash_from_string(to_hash: &String) -> String {
+pub fn get_hash_from_string(to_hash: &str) -> String {
     let mut hasher = Hasher::new();
     hasher.update(to_hash.as_bytes());
     encode_config(hasher.finalize().to_ne_bytes(), URL_SAFE_NO_PAD)
