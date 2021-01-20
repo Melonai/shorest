@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "moduleResolution": "node",
+        "target": "es2017",
+        "importsNotUsedAsValues": "error",
+        "isolatedModules": true,
+        "sourceMap": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "baseUrl": ".",
+        "paths": {
+            "$components/*": ["./src/components/*"],
+            "$actions/*": ["./src/actions/*"],
+            "$data/*": ["./src/data/*"],
+            "$utils/*": ["./src/utils/*"]
+        }
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules/*", ".svelte"]
+}

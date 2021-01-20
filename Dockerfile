@@ -9,10 +9,11 @@ RUN rm -f target/x86_64-unknown-linux-musl/release/deps/shorest*
 
 FROM node:alpine as client
 WORKDIR /client
-COPY client/package*.json ./
+COPY client/package.json ./
+COPY client/yarn.lock ./
 RUN yarn install
 COPY client ./
-RUN yarn build
+RUN yarn export
 
 FROM server-cache as server
 WORKDIR /server

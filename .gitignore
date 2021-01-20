@@ -4,5 +4,6 @@
 build/
 target/
 node_modules/
+.svelte/
 
 .env
