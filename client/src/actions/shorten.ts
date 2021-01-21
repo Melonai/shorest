@@ -12,7 +12,7 @@ async function makeRequest(url: string): Promise<ShortenResponse> {
     let body;
 
     try {
-        const response = await fetch("http://localhost:4000/", {
+        const response = await fetch("/", {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
