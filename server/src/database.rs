@@ -68,6 +68,8 @@ pub fn add_link_to_database_safely(
         }
         None => {
             // No link with the same hash exists, put it in the database
+            info!("Shortened '{}' with hash '{}'.", user_url, hash);
+
             add_link_to_database(
                 ShortenedLink {
                     hash: hash.clone(),
