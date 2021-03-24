@@ -1,8 +1,8 @@
 <script lang="ts">
-    import shorten from "$actions/shorten";
-    import { links } from "$data/links";
-    import checkUrl from "$utils/checkUrl";
-    import debounce from "$utils/debounce";
+    import shorten from "$lib/actions/shorten";
+    import { links } from "$lib/data/links";
+    import checkUrl from "$lib/utils/checkUrl";
+    import debounce from "$lib/utils/debounce";
     import ArrowIcon from "./icons/ArrowIcon.svelte";
     import CrossIcon from "./icons/CrossIcon.svelte";
 

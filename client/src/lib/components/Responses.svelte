@@ -1,7 +1,7 @@
 <script lang="ts">
     import Response from "./Response.svelte"
     import { slide } from 'svelte/transition';
-    import { links } from "$data/links";
+    import { links } from "$lib/data/links";
 </script>
 
 <style>

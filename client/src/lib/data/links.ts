@@ -1,5 +1,6 @@
-import type { ShortenRequest } from "$actions/shorten";
-import { Writable, writable } from "svelte/store";
+import type { ShortenRequest } from "$lib/actions/shorten";
+import type { Writable } from "svelte/store";
+import { writable } from "svelte/store";
 
 function createLinks() {
     const { subscribe, update }: Writable<ShortenRequest[]> = writable([]);

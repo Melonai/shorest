@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { ShortenRequest } from "$actions/shorten";
+    import type { ShortenRequest } from "$lib/actions/shorten";
 
     export let info: ShortenRequest;
 </script>
