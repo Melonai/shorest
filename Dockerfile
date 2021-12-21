@@ -13,7 +13,7 @@ COPY client/package.json ./
 COPY client/yarn.lock ./
 RUN yarn install
 COPY client ./
-RUN yarn export
+RUN yarn build
 
 FROM server-cache as server
 WORKDIR /server
